@@ -107,22 +107,30 @@ public class Board {
             for (Space space : spaces) {
                 //for every occupied space
                 if (space.isOccupied()) {
-                    //if left adjacent is not occupied
-                    if (!spaces.get(space.getIndex() - 1).isOccupied()) {
-                        spaces.get(space.getIndex() - 1).setValidity(true);
-                    }//end if
-                    //if top adjacent is not occupied
-                    if (!spaces.get(space.getIndex() - 15).isOccupied()) {
-                        spaces.get(space.getIndex() - 15).setValidity(true);
-                    }//end if
-                    //if right adjacent is not occupied
-                    if (!spaces.get(space.getIndex() + 1).isOccupied()) {
-                        spaces.get(space.getIndex() + 1).setValidity(true);
-                    }//end if
-                    //if bottom adjacent is not occupied
-                    if (!spaces.get(space.getIndex() + 15).isOccupied()) {
-                        spaces.get(space.getIndex() + 15).setValidity(true);
-                    }//end if
+                        //if left adjacent is not occupied and the column is not 0th column                    
+                        if((space.getIndex() - 1)>=0 && (space.getIndex()%15)>0 ){
+                            if (!spaces.get(space.getIndex() - 1).isOccupied()) {
+                                spaces.get(space.getIndex() - 1).setValidity(true);
+                            }//end if
+                        }
+                        //if top adjacent is not occupied and the space index is not less than 0
+                        if((space.getIndex() - 15)>=0 ){
+                            if (!spaces.get(space.getIndex() - 15).isOccupied()) {
+                                spaces.get(space.getIndex() - 15).setValidity(true);
+                            }//end if
+                        }
+                        //if right adjacent is not occupied and the column is not 14th column  
+                        if((space.getIndex() + 1)<=224 && ((space.getIndex()+1)%15)>0 ){
+                            if (!spaces.get(space.getIndex() + 1).isOccupied()) {
+                                spaces.get(space.getIndex() + 1).setValidity(true);
+                            }//end if
+                        }
+                        //if bottom adjacent is not occupied and the space index is not greater than 224
+                        if((space.getIndex() + 15)<=224 ){
+                            if (!spaces.get(space.getIndex() + 15).isOccupied()) {
+                                spaces.get(space.getIndex() + 15).setValidity(true);
+                            }//end if
+                        }
                 }//end if
             }//end for
         }//end if
@@ -130,70 +138,88 @@ public class Board {
         //if only 1 space is played, all adjacent to that one that are not occupied are valid
         if (gameState.getPlayedSpaces().size() == 1) {
             Space firstSpace = gameState.getPlayedSpaces().get(0);
-            //if left adjacent is not occupied
-            if (!spaces.get(firstSpace.getIndex() - 1).isOccupied()) {
-                spaces.get(firstSpace.getIndex() - 1).setValidity(true);
-            } else {//if left adjacent is occupied, we need to move left until we get to an unoccupied space
-                while (spaces.get(firstSpace.getIndex() - 1).isOccupied()) {
-                    firstSpace = spaces.get(firstSpace.getIndex() - 1);
-                }//end while
-                spaces.get(firstSpace.getIndex() - 1).setValidity(true);
-                firstSpace = gameState.getPlayedSpaces().get(0);
-            }//end if/else
+            //For all the adjacents, check for index limits (0<=index<=224) and column limits
+                //if left adjacent is not occupied
+                //Should not check 0th column
+                if(firstSpace.getIndex() - 1>=0 && firstSpace.getIndex() %15>0){
+                        if (!spaces.get(firstSpace.getIndex() - 1).isOccupied()) {
+                            spaces.get(firstSpace.getIndex() - 1).setValidity(true);
+                        } else {//if left adjacent is occupied, we need to move left until we get to an unoccupied space
+                            while ((firstSpace.getIndex() -1)>=0 && spaces.get(firstSpace.getIndex() - 1).isOccupied()) {
+                                firstSpace = spaces.get(firstSpace.getIndex() - 1);
+                            }//end while
+                             if((firstSpace.getIndex()-1)>=0 && firstSpace.getIndex() %15>0){
+                                spaces.get(firstSpace.getIndex() - 1).setValidity(true);
+                             }   
+                           firstSpace = gameState.getPlayedSpaces().get(0);
+                             
+                        }//end if/else
+                  }
+                  //if top adjacent is not occupied
+                  if((firstSpace.getIndex() - 15)>=0){
+                        if (!spaces.get(firstSpace.getIndex() - 15).isOccupied()) {
+                            spaces.get(firstSpace.getIndex() - 15).setValidity(true);
+                        } else {//if top adjacent is occupied, we need to move up until we get to an unoccupied space
+                            while ((firstSpace.getIndex() -15)>=0 && spaces.get(firstSpace.getIndex() - 15).isOccupied()) {
+                                firstSpace = spaces.get(firstSpace.getIndex() - 15);
+                            }//end while
+                            if((firstSpace.getIndex()-15)>=0){
+                                spaces.get(firstSpace.getIndex() - 15).setValidity(true);
+                            }
+                           firstSpace = gameState.getPlayedSpaces().get(0);
+                        }//end if/else
+                   }
+                   //if right adjacent is not occupied
+                   //Should not check 14th column
+                   if((firstSpace.getIndex() + 1)<=224 && (firstSpace.getIndex() + 1)%15>0){
+                        if (!spaces.get(firstSpace.getIndex() + 1).isOccupied()) {
+                            spaces.get(firstSpace.getIndex() + 1).setValidity(true);
+                        } else {//if right adjacent is occupied, we need to move right until we get to an unoccupied space
+                            while ((firstSpace.getIndex() + 1)<=224 && spaces.get(firstSpace.getIndex() + 1).isOccupied()) {
+                                firstSpace = spaces.get(firstSpace.getIndex() + 1);
+                            }//end while
+                            if((firstSpace.getIndex() + 1)<=224 && (firstSpace.getIndex()+1) %15>0){
+                                spaces.get(firstSpace.getIndex() + 1).setValidity(true);
+                            }
+                            firstSpace = gameState.getPlayedSpaces().get(0);
+                        }//end if/else
+                   }
+                   //if bottom adjacent is not occupied
+                   if((firstSpace.getIndex() + 15)<=224 ){
+                        if ((!spaces.get(firstSpace.getIndex() + 15).isOccupied() )) {
+                            spaces.get(firstSpace.getIndex() + 15).setValidity(true);
+                        } else {//if bottom adjacent is occupied, we need to move down until we get to an unoccupied space
+                            while ((firstSpace.getIndex() + 15 <= 224) && spaces.get(firstSpace.getIndex() + 15).isOccupied()) {
+                                firstSpace = spaces.get(firstSpace.getIndex() + 15);
+                            }//end while
+                            if(firstSpace.getIndex() + 15 <= 224){
+                                spaces.get(firstSpace.getIndex() + 15).setValidity(true);
+                            }
+                            firstSpace = gameState.getPlayedSpaces().get(0);
+                        }//end if/else
+                   }
 
-            //if top adjacent is not occupied
-            if (!spaces.get(firstSpace.getIndex() - 15).isOccupied()) {
-                spaces.get(firstSpace.getIndex() - 15).setValidity(true);
-            } else {//if top adjacent is occupied, we need to move up until we get to an unoccupied space
-                while (spaces.get(firstSpace.getIndex() - 15).isOccupied()) {
-                    firstSpace = spaces.get(firstSpace.getIndex() - 15);
-                }//end while
-                spaces.get(firstSpace.getIndex() - 15).setValidity(true);
-                firstSpace = gameState.getPlayedSpaces().get(0);
-            }//end if/else
-
-            //if right adjacent is not occupied
-            if (!spaces.get(firstSpace.getIndex() + 1).isOccupied()) {
-                spaces.get(firstSpace.getIndex() + 1).setValidity(true);
-            } else {//if right adjacent is occupied, we need to move right until we get to an unoccupied space
-                while (spaces.get(firstSpace.getIndex() + 1).isOccupied()) {
-                    firstSpace = spaces.get(firstSpace.getIndex() + 1);
-                }//end while
-                spaces.get(firstSpace.getIndex() + 1).setValidity(true);
-                firstSpace = gameState.getPlayedSpaces().get(0);
-            }//end if/else
-
-            //if bottom adjacent is not occupied
-            if (!spaces.get(firstSpace.getIndex() + 15).isOccupied()) {
-                spaces.get(firstSpace.getIndex() + 15).setValidity(true);
-            } else {//if bottom adjacent is occupied, we need to move down until we get to an unoccupied space
-                while (spaces.get(firstSpace.getIndex() + 15).isOccupied()) {
-                    firstSpace = spaces.get(firstSpace.getIndex() + 15);
-                }//end while
-                spaces.get(firstSpace.getIndex() + 15).setValidity(true);
-                firstSpace = gameState.getPlayedSpaces().get(0);
-            }//end if/else
-
-            //Set up orientation specifically for these situations to make sure scoring is right
-            //if left and right spaces are not occupied
-            if (!spaces.get(firstSpace.getIndex() - 1).isOccupied() && !spaces.get(firstSpace.getIndex() + 1).isOccupied()) {
-                gameState.setOrientation(GameState.DOWN);
-                //if top and bottom spaces are not occupied
-            } else if (!spaces.get(firstSpace.getIndex() + 15).isOccupied() && !spaces.get(firstSpace.getIndex() - 15).isOccupied()) {
-                gameState.setOrientation(GameState.ACROSS);
-                //if top and left spaces are not occupied
-            } else if (!spaces.get(firstSpace.getIndex() - 15).isOccupied() && !spaces.get(firstSpace.getIndex() - 1).isOccupied()) {
-                gameState.setOrientation(GameState.ACROSS);
-                //if top and right spaces are not occupied
-            } else if (!spaces.get(firstSpace.getIndex() - 15).isOccupied() && !spaces.get(firstSpace.getIndex() + 1).isOccupied()) {
-                gameState.setOrientation(GameState.DOWN);
-                //if bottom and left spaces are not occupied
-            } else if (!spaces.get(firstSpace.getIndex() + 15).isOccupied() && !spaces.get(firstSpace.getIndex() - 1).isOccupied()) {
-                gameState.setOrientation(GameState.ACROSS);
-                //if bottom and right spaces are not occupied
-            } else if (!spaces.get(firstSpace.getIndex() + 15).isOccupied() && !spaces.get(firstSpace.getIndex() + 1).isOccupied()) {
-                gameState.setOrientation(GameState.ACROSS);
-            }//end if/else if
+                //Set up orientation specifically for these situations to make sure scoring is right
+                //Checks for index limits (0<=index<=224)
+                //if left and right spaces are not occupied
+                if ((firstSpace.getIndex() - 1>=0 && !spaces.get(firstSpace.getIndex() - 1).isOccupied()) && (firstSpace.getIndex() + 1<=224 && !spaces.get(firstSpace.getIndex() + 1).isOccupied())) {
+                    gameState.setOrientation(GameState.DOWN);
+                    //if top and bottom spaces are not occupied
+                } else if ((firstSpace.getIndex() +15 <=224 && !spaces.get(firstSpace.getIndex() + 15).isOccupied()) && (firstSpace.getIndex() -15 >=0 && !spaces.get(firstSpace.getIndex() - 15).isOccupied())) {
+                    gameState.setOrientation(GameState.ACROSS);
+                    //if top and left spaces are not occupied
+                } else if ((firstSpace.getIndex() -15 >=0 && !spaces.get(firstSpace.getIndex() - 15).isOccupied()) && (firstSpace.getIndex() - 1>=0  && !spaces.get(firstSpace.getIndex() - 1).isOccupied())) {
+                    gameState.setOrientation(GameState.ACROSS);
+                    //if top and right spaces are not occupied
+                } else if ((firstSpace.getIndex() -15 >=0 && !spaces.get(firstSpace.getIndex() - 15).isOccupied()) && (firstSpace.getIndex() + 1<=224 && !spaces.get(firstSpace.getIndex() + 1).isOccupied())) {
+                    gameState.setOrientation(GameState.DOWN);
+                    //if bottom and left spaces are not occupied
+                } else if ((firstSpace.getIndex() +15 <=224 && !spaces.get(firstSpace.getIndex() + 15).isOccupied()) && (firstSpace.getIndex() - 1>=0 && !spaces.get(firstSpace.getIndex() - 1).isOccupied())) {
+                    gameState.setOrientation(GameState.ACROSS);
+                    //if bottom and right spaces are not occupied
+                } else if ((firstSpace.getIndex() +15 <=224 && !spaces.get(firstSpace.getIndex() + 15).isOccupied()) && (firstSpace.getIndex() + 1<=224 && !spaces.get(firstSpace.getIndex() + 1).isOccupied())) {
+                    gameState.setOrientation(GameState.ACROSS);
+                }//end if/else if
         }//end if
 
         //if 2 or more spaces are played, figure out if word is going across or down, and only validate the ends of the word
@@ -203,16 +229,28 @@ public class Board {
             ArrayList<Space> playedSpaces = gameState.getPlayedSpaces();
             Collections.sort(playedSpaces);
             int difference = Math.abs(playedSpaces.get(0).getIndex() - playedSpaces.get(1).getIndex());
-            if (difference >= 15) {
+            
+             if (difference >= 15) {
                 gameState.setOrientation(GameState.DOWN);
-                spaces.get(playedSpaces.get(0).getIndex() - 15).setValidity(true);
-                spaces.get(playedSpaces.get(lastIndex).getIndex() + 15).setValidity(true);
+                if((playedSpaces.get(0).getIndex() - 15)>=0){
+                    spaces.get(playedSpaces.get(0).getIndex() - 15).setValidity(true);
+                }
+                if((playedSpaces.get(lastIndex).getIndex() + 15)<=224){
+                    spaces.get(playedSpaces.get(lastIndex).getIndex() + 15).setValidity(true);
+                }
             }
             if (difference < 15) {
                 gameState.setOrientation(GameState.ACROSS);
-                spaces.get(playedSpaces.get(0).getIndex() - 1).setValidity(true);
-                spaces.get(playedSpaces.get(lastIndex).getIndex() + 1).setValidity(true);
+                //Should not check 0th column 
+                if(((playedSpaces.get(0).getIndex()) % 15) - 1 >= 0){
+                    spaces.get(playedSpaces.get(0).getIndex() - 1).setValidity(true);
+                }
+                //Should not check 14th column
+                if(((playedSpaces.get(lastIndex).getIndex() % 15) + 1) <= 14 ){
+                    spaces.get(playedSpaces.get(lastIndex).getIndex() + 1).setValidity(true);
+                }
             }//end if
+            
         }//end if
 
         //setup the return list
